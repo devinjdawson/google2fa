@@ -2,7 +2,14 @@
 
 namespace PragmaRX\Google2FA\Support;
 
-use BaconQrCode\Renderer\Image\Png;
+// Additional Classes Addes for BaconQRCode 2.0 PNG Support
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+
+// Removing Old class
+// use BaconQrCode\Renderer\Image\Png;
+
 use BaconQrCode\Writer as BaconQrCodeWriter;
 use PragmaRX\Google2FA\Exceptions\InsecureCallException;
 
@@ -51,9 +58,15 @@ trait QRCode
     {
         $url = $this->getQRCodeUrl($company, $holder, $secret);
 
-        $renderer = new Png();
-        $renderer->setWidth($size);
-        $renderer->setHeight($size);
+        // BaconQRCode 2.0 Addition
+        $renderer = new ImageRenderer(
+            new RendererStyle($size),
+            new ImagickImageBackEnd()
+        );
+        // BaconQRCode 2.0 Removal
+        // $renderer = new ImagickImageBackEnd();
+        // $renderer->setWidth($size);
+        // $renderer->setHeight($size);
 
         $bacon = new BaconQrCodeWriter($renderer);
         $data = $bacon->writeString($url, $encoding);
